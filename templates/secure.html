@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Extract secure message - CipherChat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mdb.min.css') }}">
+    <style>
+        body {
+            background: #fff !important;
+            color: #212529;
+        }
+
+        .card {
+            border-color: #dee2e6;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <main class="container py-5">
+        <section class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-end mb-3">
+                    <a class="btn btn-outline-primary" href="{{ url_for('chat') }}">Back to chat</a>
+                </div>
+                <p class="text-muted">
+                    Upload the original, unmodified secure PNG sent to
+                    <strong>{{ current_user.username }}</strong>. Only the account selected as the
+                    recipient can decrypt it. If you see a recipient-key error, sign in to the
+                    intended recipient account and try again. If that account's private key was
+                    lost or replaced, the sender must create and send a new secure image.
+                    Text-only messages and original images do not contain an extractable payload;
+                    JPEG/GIF files and edited or re-saved PNGs are not supported.
+                </p>
+
+                <form id="decode-form" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <div class="mb-3">
+                        <label class="form-label" for="secure-image">Secure image</label>
+                        <input class="form-control" id="secure-image" name="image" type="file"
+                               accept="image/png" required>
+                    </div>
+                    <button class="btn btn-primary" id="decode-button" type="submit">
+                        Extract and decrypt
+                    </button>
+                </form>
+
+                <div id="result" class="alert mt-4 d-none" role="status" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("decode-form");
+        const result = document.getElementById("result");
+        const button = document.getElementById("decode-button");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            result.className = "alert mt-4 d-none";
+            result.textContent = "";
+            button.disabled = true;
+            button.textContent = "Processing...";
+
+            try {
+                const response = await fetch("{{ url_for('decode_image') }}", {
+                    method: "POST",
+                    body: new FormData(form)
+                });
+                const data = await response.json();
+
+                result.className = `alert mt-4 ${response.ok ? "alert-success" : "alert-danger"}`;
+                result.textContent = response.ok
+                    ? data.hidden_message
+                    : (data.message || "Could not process this image.");
+            } catch (error) {
+                result.className = "alert alert-danger mt-4";
+                result.textContent = "The request failed. Please try again.";
+            } finally {
+                button.disabled = false;
+                button.textContent = "Extract and decrypt";
+            }
+        });
+    </script>
+</body>
+</html>

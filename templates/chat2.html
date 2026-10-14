@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+       
+    
+        /* .sent .message-text{font-family:monospace;letter-spacing:2px}
+        .sent .message-text {
+    font-family: monospace;
+    letter-spacing: 2px;
+    color: #666;  } */
+
+.received .message-text {
+    color: #333;  /* Normal text color for received messages */
+}
+
+.message-image-container {
+    position: relative;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+.message-image {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 5px;
+    transition: opacity 0.3s;
+}
+
+.image-hover-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    word-wrap: break-word;
+}
+
+.message-image-container:hover .image-hover-text {
+    opacity: 1;
+}
+
+.message-image-container:hover .message-image {
+    opacity: 0.8;
+}
+    </style>
+</head>
+<body>
+    <div class="container app">
+        <div class="row app-one">
+            <div class="col-12 mobile-toggle text-right d-md-none mb-2">
+                <button class="btn btn-primary" id="toggle-sidebar">Users</button>
+            </div>
+            <div class="col-md-4 col-sm-4 col-12 side d-none d-md-block" id="sidebar">
+                <div class="side-one">
+                    <div class="row heading mb-2">
+                        <div class="col-4 text-center heading-avatar">
+                            <div class="btn btn-primary">{{ current_user.username }}</div>
+                        </div>
+                        <div class="col-4 text-right heading-compose">
+                            <form action="{{ url_for('logout') }}" method="POST">
+                                {{ form.hidden_tag() }}
+                                <button type="submit" class="btn btn-danger">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row searchBox">
+                        <div class="col-12 searchBox-inner">
+                            <ul id="users" class="list-group">
+                                {% for user in users %}{% if user.id != current_user.id %}
+                                <li class="user list-group-item" data-id="{{ user.id }}">{{ user.username }}</li>
+                                {% endif %}{% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-8 col-12 conversation">
+                <div class="row heading mb-2">
+                    <div class="col-12">
+                        <h3>{% if selected_chat %}Chat with {{ selected_chat.name }}{% else %}Select a user to start a chat{% endif %}</h3>
+                    </div>
+                </div>
+                <div class="message-section">
+                    <!-- In the messages section of chat.html -->
+<div id="messages" class="border p-2 mb-3" style="height:60vh;overflow-y:auto">
+    {% for message in messages %}
+    <div class="message {% if message.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+        <strong>{% if message.sender_id == current_user.id %}You{% else %}{{ message.sender.username }}{% endif %}:</strong> 
+        {% if message.sender_id == current_user.id %}
+            <!-- Show ciphertext for sender's messages -->
+            <span class="message-text">{{ message.ciphertext if message.ciphertext else '' }}</span>
+
+        {% else %}
+            <!-- Show plaintext for receiver's messages -->
+            <span class="message-text">{{ message.content }}</span>
+        {% endif %}
+        <br>
+        {% if message.image %}
+        <div class="message-image-container">
+            <img src="{{ url_for('static', filename='uploads/' + message.image) }}" alt="Image" class="message-image">
+
+            {% if message.sender_id == current_user.id %}
+            <!-- Show ciphertext for sender's messages -->
+            <div class="">{{ message.content }}</div>
+
+        {% else %}
+            <!-- Show plaintext for receiver's messages -->
+            <div class="image-hover-text">{{ message.content }}</div>
+        {% endif %}
+            
+            
+
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+                    <form id="message-form" action="{{ url_for('send_message') }}" method="POST" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+                        <div class="row message-form align-items-center">
+                            <div class="col-1 text-center">
+                                <i class="fa fa-smile-o fa-2x emoji-button" title="Attach Image"></i>
+                                <input type="file" id="file-input" name="image" style="display:none">
+                            </div>
+                            <div class="col-9">
+                                <input type="hidden" id="receiver-id" name="receiver_id" value="{{ selected_chat.id }}">
+                                <textarea name="message" required class="form-control" rows="1" placeholder="Type your message..."></textarea>
+                            </div>
+                            <div class="col-1 text-center">
+                                <button type="button" id="send-button" class="btn btn-primary">
+                                    <i class="fa fa-send fa-2x" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function() {
+            $('.user').click(function() {
+                window.location.href = '/chat/' + $(this).data('id');
+            });
+
+            $('#message-form').submit(function(e) {
+                e.preventDefault();
+                sendMessage();
+            });
+
+            $('#toggle-sidebar').click(function() {
+                $('#sidebar').toggleClass('d-none d-block');
+            });
+
+            const socket = io();
+            socket.on('message', function(data) {
+    const isCurrentUser = data.sender_id === '{{ current_user.id }}';
+    
+    // For sender (current user), show ciphertext (obfuscated)
+    // For receiver, show plaintext
+    let displayContent = isCurrentUser 
+        ? data.ciphertext || data.content.replace(/./g, () => "!@#$%^&*()"[Math.floor(Math.random() * 8)])
+        : data.content;
+    
+    let messageHTML = `<div class="message ${isCurrentUser ? 'sent' : 'received'}">
+                            <strong>${isCurrentUser ? 'You' : data.sender_id}:</strong> 
+                            <span class="message-text">${displayContent}</span><br>`;
+
+    if (data.image_url) {
+        messageHTML += `<div class="message-image-container">
+                            <img src="/static/uploads/${data.image_url}" alt="Image" class="message-image">
+                            <div class="image-hover-text">${data.content}</div>
+                        </div>`;
+    }
+
+    $('#messages').append(messageHTML + '</div>').scrollTop($('#messages')[0].scrollHeight);
+});
+            $('.emoji-button').click(() => $('#file-input').click());
+            $('#send-button').click(sendMessage);
+
+            function sendMessage() {
+                const formData = new FormData($('#message-form')[0]);
+                if (!$('textarea[name="message"]').val().trim() && !$('#file-input')[0].files[0]) return;
+                
+                $.ajax({
+                    type: 'POST',
+                    url: $('#message-form').attr('action'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+    let obfuscatedMessage = response.message.replace(/./g, () => "!@#$%^&*()"[Math.floor(Math.random() * 8)]);
+    let messageHTML = `<div class="message sent"><strong>You:</strong> ${obfuscatedMessage}<br>`;
+    if (response.image_url) {
+        messageHTML += `<div class="message-image-container"><img src="/static/uploads/${response.image_url}" alt="Image" class="message-image"><div class="image-hover-text">${response.message}</div></div>`;
+    }
+    $('#messages').append(messageHTML + '</div>');
+    $('textarea[name="message"]').val('');
+    $('#file-input').val('');
+    $('#messages').scrollTop($('#messages')[0].scrollHeight);
+},
+
+                    error: function(err) {
+                        console.error('Error:', err);
+                        
+                    }
+                });
+            }
+            $('#messages').scrollTop($('#messages')[0].scrollHeight);
+        });
+    </script>
+</body>
+</html>

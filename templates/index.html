@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Message Workspace</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8fafc;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --text-main: #212529;
+            --text-muted: #64748b;
+            --border-color: rgba(15, 23, 42, 0.12);
+            --glow-cyan: rgba(6, 182, 212, 0.25);
+        }
+
+        body {
+            background-color: #fff;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        code, pre, .font-mono {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .cyber-navbar {
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cyber-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+        }
+
+        .cyber-card:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        /* Glow Elements */
+        .badge-cyan {
+            background: rgba(6, 182, 212, 0.15);
+            color: #0369a1;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, 0.15);
+            color: #047857;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-purple {
+            background: rgba(139, 92, 246, 0.15);
+            color: #6d28d9;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* Nav Pills Custom */
+        .nav-pills .nav-link {
+            color: #475569;
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-pills .nav-link:hover {
+            color: #0f172a;
+            background: #f1f5f9;
+        }
+
+        .nav-pills .nav-link.active {
+            color: #fff;
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Custom Form Controls */
+        .form-control, .form-select {
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            color: #212529;
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #fff;
+            border-color: var(--accent-cyan);
+            color: #212529;
+            box-shadow: 0 0 0 0.25rem rgba(6, 182, 212, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: #6c757d;
+        }
+
+        .btn-cyber-primary {
+            background: linear-gradient(135deg, #06b6d4, #2563eb);
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            padding: 11px 22px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-cyber-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
+            color: white;
+        }
+
+        .btn-cyber-outline {
+            background: transparent;
+            border: 1px solid #ced4da;
+            color: #334155;
+            border-radius: 10px;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cyber-outline:hover {
+            background: #f8fafc;
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        /* Upload Area */
+        .dropzone-box {
+            border: 2px dashed rgba(6, 182, 212, 0.55);
+            background: #f8fdff;
+            border-radius: 14px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .dropzone-box:hover, .dropzone-box.dragover {
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.08);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+        }
+
+        .preview-img-container {
+            max-height: 260px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+        }
+
+        .preview-img-container img {
+            max-height: 260px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        /* Metric Pill */
+        .metric-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 18px;
+            height: 100%;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Terminal block */
+        .cyber-terminal {
+            background: #f8fafc;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 16px;
+            color: #0369a1;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        /* Hero Pipeline */
+        .pipeline-step {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .text-white, .text-light {
+            color: #212529 !important;
+        }
+
+        .navbar-brand .bg-primary .text-white {
+            color: #fff !important;
+        }
+
+        .text-secondary {
+            color: #64748b !important;
+        }
+
+        .bg-black, .bg-dark {
+            background-color: #f8fafc !important;
+        }
+
+        .text-purple {
+            color: #7c3aed !important;
+        }
+
+        .pipeline-step i {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        /* Animated Pulse */
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            display: inline-block;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg cyber-navbar sticky-top py-3">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center text-white fw-bold" href="/">
+                <div class="bg-primary rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                    <i class="fas fa-shield-halved text-white"></i>
+                </div>
+                <span>Secure Message Workspace</span>
+            </a>
+            <button class="navbar-toggler text-white border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navContent">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge badge-green px-3 py-2 me-2">
+                        <span class="pulse-dot me-1"></span> AES-256-GCM + LSB Ready
+                    </span>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('chat') }}" class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-comments me-1"></i> Chat ({{ current_user.username }})
+                        </a>
+                        <form action="{{ url_for('logout') }}" method="POST" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                        <a href="{{ url_for('signup') }}" class="btn btn-sm btn-cyber-primary">
+                            Sign Up
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="container-fluid px-4 py-4">
+
+        <!-- NAV TABS -->
+        <ul class="nav nav-pills mb-4" id="mainTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="tab-hide-btn" data-bs-toggle="pill" data-bs-target="#tab-hide" type="button">
+                    <i class="fas fa-lock me-2"></i> 1. Encrypt & Hide (Embedding)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="tab-extract-btn" data-bs-toggle="pill" data-bs-target="#tab-extract" type="button">
+                    <i class="fas fa-unlock me-2"></i> 2. Extract & Decrypt (Recovery)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="tab-quality-btn" data-bs-toggle="pill" data-bs-target="#tab-quality" type="button">
+                    <i class="fas fa-microscope me-2"></i> 3. Steganalysis & PSNR Quality Lab
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="tab-keys-btn" data-bs-toggle="pill" data-bs-target="#tab-keys" type="button">
+                    <i class="fas fa-key me-2"></i> 4. Key Generator & Entropy Meter
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="mainTabContent">
+
+            <!-- ENCRYPT & HIDE -->
+            <div class="tab-pane fade show active" id="tab-hide" role="tabpanel">
+                <div class="row g-4">
+                    <!-- Left: Input Form -->
+                    <div class="col-lg-6">
+                        <div class="cyber-card p-4">
+                            <h4 class="fw-bold text-white mb-3">
+                                <i class="fas fa-lock text-info me-2"></i> Step 1: Carrier & Secret Data
+                            </h4>
+
+                            <!-- Cover Image Upload -->
+                            <div class="mb-3">
+                                <label class="form-label text-light fw-semibold">
+                                    <i class="fas fa-image me-1 text-primary"></i> 1. Select Cover Image (PNG, JPG, BMP)
+                                </label>
+                                <div class="dropzone-box" id="cover-dropzone" onclick="document.getElementById('cover_image_input').click()">
+                                    <i class="fas fa-cloud-arrow-up fa-2x text-info mb-2"></i>
+                                    <p class="mb-1 text-light fw-medium">Click to select or drag & drop cover image</p>
+                                    <small class="text-secondary">PNG format recommended for optimal lossless quality</small>
+                                </div>
+                                <input type="file" id="cover_image_input" accept="image/png,image/jpeg,image/bmp" class="d-none" onchange="handleCoverSelected(this)">
+                                
+                                <!-- Capacity readout badge -->
+                                <div id="capacity-badge" class="mt-2 d-none">
+                                    <div class="p-2 rounded bg-black border border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                                        <small class="text-secondary"><i class="fas fa-database me-1"></i> Available Hiding Capacity:</small>
+                                        <span id="capacity-text" class="fw-bold text-info font-mono small">--</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Secret Payload Type -->
+                            <div class="mb-3">
+                                <label class="form-label text-light fw-semibold">
+                                    <i class="fas fa-file-shield me-1 text-success"></i> 2. Secret Payload Type
+                                </label>
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="payload_type" id="type_text" value="text" checked onchange="togglePayloadInput()">
+                                    <label class="btn btn-outline-info" for="type_text"><i class="fas fa-align-left me-1"></i> Secret Text Message</label>
+
+                                    <input type="radio" class="btn-check" name="payload_type" id="type_file" value="file" onchange="togglePayloadInput()">
+                                    <label class="btn btn-outline-info" for="type_file"><i class="fas fa-file-arrow-up me-1"></i> Secret Document / File</label>
+                                </div>
+                            </div>
+
+                            <!-- Text Input -->
+                            <div class="mb-3" id="input_text_wrapper">
+                                <label class="form-label text-light fw-semibold" for="secret_text">Secret Text Message</label>
+                                <textarea id="secret_text" class="form-control font-mono" rows="4" placeholder="Enter confidential message to encrypt with AES-256 and hide..."></textarea>
+                                <small class="text-secondary">Text will be encrypted into ciphertext before pixel embedding.</small>
+                            </div>
+
+                            <!-- File Input -->
+                            <div class="mb-3 d-none" id="input_file_wrapper">
+                                <label class="form-label text-light fw-semibold" for="secret_file">Secret File Upload</label>
+                                <input type="file" id="secret_file" class="form-control">
+                                <small class="text-secondary">Any format: .pdf, .docx, .txt, .zip, .png, etc.</small>
+                            </div>
+
+                            <!-- AES-256 Secret Key -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="form-label text-light fw-semibold mb-0" for="aes_key_input">
+                                        <i class="fas fa-key me-1 text-warning"></i> 3. AES-256 Secret Key or Passphrase
+                                    </label>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary py-0" onclick="generateRandomKeyForInput('aes_key_input')">
+                                        <i class="fas fa-dice me-1"></i> Generate 256-Bit Key
+                                    </button>
+                                </div>
+                                <div class="input-group">
+                                    <input type="password" id="aes_key_input" class="form-control font-mono" placeholder="Enter secret password or 256-bit key...">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('aes_key_input', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <small class="text-secondary">Used for AES-256-GCM authenticated encryption. Keep this key safe!</small>
+                            </div>
+
+                            <!-- Action button -->
+                            <button type="button" class="btn btn-cyber-primary w-100 py-3 fs-5" id="btn-run-hide" onclick="executeEncryptAndHide()">
+                                <i class="fas fa-shield-halved me-2"></i> Encrypt with AES-256 & Embed in Image
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Results & Stego Preview -->
+                    <div class="col-lg-6">
+                        <div class="cyber-card p-4 h-100">
+                            <h4 class="fw-bold text-white mb-3">
+                                <i class="fas fa-check-double text-success me-2"></i> Stego Output & Metrics
+                            </h4>
+
+                            <div id="hide-placeholder" class="text-center py-5">
+                                <i class="fas fa-images fa-4x text-secondary opacity-50 mb-3"></i>
+                                <h6 class="text-secondary">Stego image preview and cybersecurity metrics will appear here after encryption.</h6>
+                            </div>
+
+                            <div id="hide-results" class="d-none">
+                                <div class="preview-img-container mb-3">
+                                    <img id="stego-result-img" src="" alt="Stego Image Output">
+                                </div>
+
+                                <div class="d-flex gap-2 mb-3">
+                                    <a id="btn-download-stego" href="#" download="stego_secure.png" class="btn btn-success flex-grow-1">
+                                        <i class="fas fa-download me-2"></i> Download Stego PNG
+                                    </a>
+                                    <button class="btn btn-cyber-outline" onclick="transferStegoToExtract()">
+                                        <i class="fas fa-arrow-right-to-bracket me-1"></i> Test Extraction
+                                    </button>
+                                </div>
+
+                                <!-- Steganography Metrics Grid -->
+                                <h6 class="fw-bold text-white mb-2">Quality & Security Metrics</h6>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <div class="metric-card">
+                                            <div class="text-secondary small">Peak Signal-to-Noise Ratio</div>
+                                            <div class="metric-value text-info" id="metric-psnr">-- dB</div>
+                                            <div class="small text-success" id="metric-psnr-rating">Invisible</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="metric-card">
+                                            <div class="text-secondary small">Mean Squared Error (MSE)</div>
+                                            <div class="metric-value text-purple" id="metric-mse">--</div>
+                                            <div class="small text-secondary">Target: &lt; 0.05</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="metric-card">
+                                            <div class="text-secondary small">Capacity Utilized</div>
+                                            <div class="metric-value text-warning" id="metric-cap-pct">--%</div>
+                                            <div class="small text-secondary" id="metric-bytes">-- bytes</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="metric-card">
+                                            <div class="text-secondary small">Modified Pixels</div>
+                                            <div class="metric-value text-light" id="metric-modified-px">--</div>
+                                            <div class="small text-secondary" id="metric-modified-pct">--% of carrier</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-dark border border-secondary border-opacity-25 small mb-0">
+                                    <i class="fas fa-shield-check text-success me-1"></i>
+                                    <strong>Cipher Algorithm:</strong> AES-256-GCM AEAD (256-bit symmetric key, 12-byte IV, 16-byte authentication tag). Lossless PNG ensures zero degradation.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: EXTRACT & DECRYPT (RECOVERY) -->
+            <div class="tab-pane fade" id="tab-extract" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="cyber-card p-4">
+                            <h4 class="fw-bold text-white mb-3">
+                                <i class="fas fa-unlock text-success me-2"></i> Extract & Decrypt Carrier Image
+                            </h4>
+
+                            <!-- Stego Image Upload -->
+                            <div class="mb-3">
+                                <label class="form-label text-light fw-semibold">
+                                    <i class="fas fa-file-image me-1 text-info"></i> 1. Select Stego Image (PNG)
+                                </label>
+                                <div class="dropzone-box" id="stego-dropzone" onclick="document.getElementById('stego_image_input').click()">
+                                    <i class="fas fa-upload fa-2x text-success mb-2"></i>
+                                    <p class="mb-1 text-light fw-medium">Upload Stego Image containing hidden payload</p>
+                                    <small class="text-secondary">Must be the original, unmodified PNG generated by this system</small>
+                                </div>
+                                <input type="file" id="stego_image_input" accept="image/png" class="d-none" onchange="handleStegoSelected(this)">
+                                
+                                <div id="stego-preview-container" class="mt-2 preview-img-container d-none">
+                                    <img id="stego-preview-img" src="" alt="Stego Preview">
+                                </div>
+                            </div>
+
+                            <!-- AES Secret Key Input -->
+                            <div class="mb-4">
+                                <label class="form-label text-light fw-semibold" for="extract_key_input">
+                                    <i class="fas fa-key me-1 text-warning"></i> 2. AES-256 Secret Key or Passphrase
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" id="extract_key_input" class="form-control font-mono" placeholder="Enter the exact key used during encryption...">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('extract_key_input', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <small class="text-secondary">Incorrect keys will be rejected by AES-GCM tag verification without exposing any data.</small>
+                            </div>
+
+                            <!-- Extract Action -->
+                            <button type="button" class="btn btn-success w-100 py-3 fs-5" id="btn-run-extract" onclick="executeExtractAndDecrypt()">
+                                <i class="fas fa-microchip me-2"></i> Extract LSB Bits & Verify Decryption
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Extracted Result -->
+                    <div class="col-lg-6">
+                        <div class="cyber-card p-4 h-100">
+                            <h4 class="fw-bold text-white mb-3">
+                                <i class="fas fa-file-shield text-info me-2"></i> Decryption Verification Result
+                            </h4>
+
+                            <div id="extract-placeholder" class="text-center py-5">
+                                <i class="fas fa-fingerprint fa-4x text-secondary opacity-50 mb-3"></i>
+                                <h6 class="text-secondary">Upload a stego image and enter the secret key to extract hidden information.</h6>
+                            </div>
+
+                            <div id="extract-results" class="d-none">
+                                <div class="d-flex align-items-center justify-content-between p-3 rounded mb-3 bg-black border border-success border-opacity-50">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-shield-check fa-2x text-success me-3"></i>
+                                        <div>
+                                            <h6 class="text-success fw-bold mb-0">AES-256-GCM Tag Verified</h6>
+                                            <small class="text-secondary">Cryptographic authenticity & message integrity confirmed.</small>
+                                        </div>
+                                    </div>
+                                    <span class="badge badge-green px-3 py-2">VALID TAG</span>
+                                </div>
+
+                                <!-- Text Result -->
+                                <div id="extracted-text-section" class="mb-3 d-none">
+                                    <label class="form-label text-light fw-semibold">Recovered Secret Text Message:</label>
+                                    <div class="cyber-terminal p-3 mb-2" id="extracted-text-content" style="max-height: 250px; white-space: pre-wrap;"></div>
+                                    <button class="btn btn-cyber-outline btn-sm" onclick="copyExtractedText()">
+                                        <i class="fas fa-copy me-1"></i> Copy to Clipboard
+                                    </button>
+                                </div>
+
+                                <!-- File Result -->
+                                <div id="extracted-file-section" class="mb-3 d-none">
+                                    <label class="form-label text-light fw-semibold">Recovered Confidential File:</label>
+                                    <div class="p-3 rounded bg-black border border-secondary border-opacity-25 d-flex align-items-center justify-content-between mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-lines fa-2x text-info me-3"></i>
+                                            <div>
+                                                <h6 class="text-white fw-bold mb-0" id="extracted-filename">document.bin</h6>
+                                                <small class="text-secondary" id="extracted-filesize">0 KB</small>
+                                            </div>
+                                        </div>
+                                        <a id="btn-download-recovered-file" href="#" class="btn btn-cyber-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i> Download File
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Error Message Box -->
+                            <div id="extract-error" class="alert alert-danger d-none border-0" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-circle-exclamation fa-2x text-danger me-3"></i>
+                                    <div>
+                                        <h6 class="fw-bold mb-0" id="extract-error-title">Authentication Failed</h6>
+                                        <small id="extract-error-msg">Incorrect key or altered stego image.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: STEGANALYSIS & PSNR QUALITY LAB -->
+            <div class="tab-pane fade" id="tab-quality" role="tabpanel">
+                <div class="cyber-card p-4">
+                    <h4 class="fw-bold text-white mb-2">
+                        <i class="fas fa-microscope text-warning me-2"></i> Steganalysis & Imperceptibility Quality Lab
+                    </h4>
+                    <p class="text-secondary mb-4">
+                        Perform scientific evaluation of carrier image distortion. Computes Peak Signal-to-Noise Ratio (PSNR), Mean Squared Error (MSE), and generates an amplified difference map highlighting modified LSBs.
+                    </p>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-5">
+                            <label class="form-label text-light fw-semibold">1. Original Cover Image</label>
+                            <input type="file" id="lab_cover_input" accept="image/*" class="form-control mb-2" onchange="previewLabImage(this, 'lab-cover-preview')">
+                            <div class="preview-img-container">
+                                <img id="lab-cover-preview" src="/static/uploads/cover_sample.png" alt="Cover Preview" onerror="this.src='https://via.placeholder.com/400x300?text=Select+Cover+Image'">
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label text-light fw-semibold">2. Stego Image</label>
+                            <input type="file" id="lab_stego_input" accept="image/png" class="form-control mb-2" onchange="previewLabImage(this, 'lab-stego-preview')">
+                            <div class="preview-img-container">
+                                <img id="lab-stego-preview" src="/static/uploads/stego_sample.png" alt="Stego Preview" onerror="this.src='https://via.placeholder.com/400x300?text=Select+Stego+Image'">
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex flex-column justify-content-end">
+                            <label class="form-label text-light fw-semibold">Amplification Factor</label>
+                            <select id="lab_amp_factor" class="form-select mb-3">
+                                <option value="50">50x</option>
+                                <option value="100" selected>100x (Recommended)</option>
+                                <option value="200">200x (Extreme)</option>
+                            </select>
+                            <button class="btn btn-warning w-100 py-2 fw-bold text-dark" onclick="executeQualityAnalysis()">
+                                <i class="fas fa-calculator me-1"></i> Compute Metrics
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Output Panel -->
+                    <div id="quality-results-panel" class="d-none">
+                        <hr style="border-color: var(--border-color);">
+                        <h5 class="fw-bold text-white mb-3">Visual Steganalysis & Difference Map (100x Amplified)</h5>
+                        
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4 text-center">
+                                <small class="text-secondary fw-semibold d-block mb-1">Cover Image</small>
+                                <div class="preview-img-container">
+                                    <img id="comp-cover-img" src="" alt="Cover">
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <small class="text-secondary fw-semibold d-block mb-1">Stego Image</small>
+                                <div class="preview-img-container">
+                                    <img id="comp-stego-img" src="" alt="Stego">
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <small class="text-warning fw-semibold d-block mb-1">Amplified Difference Map</small>
+                                <div class="preview-img-container border border-warning border-opacity-50">
+                                    <img id="comp-diff-img" src="" alt="Difference Map">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistical metrics table -->
+                        <div class="table-responsive">
+                            <table class="table table-dark table-bordered align-middle">
+                                <thead>
+                                    <tr class="table-secondary text-dark">
+                                        <th>Metric Description</th>
+                                        <th>Formula / Standard</th>
+                                        <th>Observed Value</th>
+                                        <th>Evaluation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Peak Signal-to-Noise Ratio (PSNR)</strong></td>
+                                        <td><code>10 * log10(255^2 / MSE)</code></td>
+                                        <td class="font-mono text-info fw-bold" id="table-psnr">-- dB</td>
+                                        <td><span class="badge badge-green" id="table-rating">Exceptional</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Mean Squared Error (MSE)</strong></td>
+                                        <td><code>sum((Cover - Stego)^2) / 3MN</code></td>
+                                        <td class="font-mono text-purple fw-bold" id="table-mse">--</td>
+                                        <td><span class="text-success small">Near zero distortion</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Modified Pixels Ratio</strong></td>
+                                        <td><code>Modified / Total * 100</code></td>
+                                        <td class="font-mono text-warning fw-bold" id="table-ber">--%</td>
+                                        <td id="table-pixels-count">-- pixels</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Red Channel PSNR / MSE</strong></td>
+                                        <td>R channel sample analysis</td>
+                                        <td class="font-mono" id="table-r-metrics">--</td>
+                                        <td><span class="text-secondary small">Individual channel stability</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Green Channel PSNR / MSE</strong></td>
+                                        <td>G channel sample analysis</td>
+                                        <td class="font-mono" id="table-g-metrics">--</td>
+                                        <td><span class="text-secondary small">Individual channel stability</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Blue Channel PSNR / MSE</strong></td>
+                                        <td>B channel sample analysis</td>
+                                        <td class="font-mono" id="table-b-metrics">--</td>
+                                        <td><span class="text-secondary small">Individual channel stability</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: KEY GENERATOR & ENTROPY -->
+            <div class="tab-pane fade" id="tab-keys" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="cyber-card p-4">
+                            <h4 class="fw-bold text-white mb-3">
+                                <i class="fas fa-key text-purple me-2"></i> 256-Bit Cryptographic Key Generator
+                            </h4>
+                            <p class="text-secondary small">
+                                Generates cryptographically secure pseudorandom numbers (CSPRNG) conforming to AES-256 standard (32 raw bytes = 256 bits of key entropy).
+                            </p>
+
+                            <button class="btn btn-cyber-primary w-100 mb-4" onclick="fetchNewKeys()">
+                                <i class="fas fa-rotate me-2"></i> Generate Fresh 256-Bit AES Key
+                            </button>
+
+                            <div class="mb-3">
+                                <label class="form-label text-light fw-semibold">Hexadecimal Format (64 chars):</label>
+                                <div class="input-group">
+                                    <input type="text" id="gen_key_hex" class="form-control font-mono" readonly value="">
+                                    <button class="btn btn-outline-secondary" onclick="copyInput('gen_key_hex')"><i class="fas fa-copy"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-light fw-semibold">Base64 Format (44 chars):</label>
+                                <div class="input-group">
+                                    <input type="text" id="gen_key_b64" class="form-control font-mono" readonly value="">
+                                    <button class="btn btn-outline-secondary" onclick="copyInput('gen_key_b64')"><i class="fas fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="cyber-card p-4">
+                            <h4 class="fw-bold text-white mb-3">
+                                <i class="fas fa-gauge-high text-info me-2"></i> Passphrase Entropy Evaluator
+                            </h4>
+                            <p class="text-secondary small">
+                                Passphrases are converted to 256-bit AES keys using PBKDF2-HMAC-SHA256 with 600,000 iterations. Check your password's entropy strength:
+                            </p>
+
+                            <div class="mb-3">
+                                <label class="form-label text-light fw-semibold">Test Custom Password / Passphrase:</label>
+                                <input type="text" id="entropy_input" class="form-control font-mono" placeholder="Type password here..." oninput="evaluatePasswordEntropy(this.value)">
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-secondary small">Entropy Estimate:</span>
+                                    <span id="entropy-bits" class="text-info fw-bold font-mono">0 bits</span>
+                                </div>
+                                <div class="progress" style="height: 10px; background: rgba(255,255,255,0.08);">
+                                    <div id="entropy-progress" class="progress-bar bg-danger" role="progressbar" style="width: 5%"></div>
+                                </div>
+                                <small id="entropy-label" class="text-secondary mt-1 d-block">Very Weak</small>
+                            </div>
+
+                            <div class="p-3 rounded bg-black border border-secondary border-opacity-25 small text-secondary">
+                                <strong class="text-white">Cybersecurity Recommendation:</strong> Minimum 64 bits of entropy recommended for protecting classified files against offline dictionary attacks.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="py-4 border-top text-center text-secondary small" style="border-color: var(--border-color) !important; background: var(--bg-secondary);">
+        <div class="container">
+            <p class="mb-1"><strong>Secure Message Workspace</strong></p>
+            <p class="mb-0 text-muted">Encrypt messages, hide them in images, and recover them with the intended recipient account.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Tab switcher
+        function switchTab(tabId) {
+            const triggerEl = document.querySelector(`button[data-bs-target="#${tabId}"]`);
+            if (triggerEl) {
+                const tab = new bootstrap.Tab(triggerEl);
+                tab.show();
+            }
+        }
+
+        // Toggle text/file payload
+        function togglePayloadInput() {
+            const isText = document.getElementById("type_text").checked;
+            document.getElementById("input_text_wrapper").classList.toggle("d-none", !isText);
+            document.getElementById("input_file_wrapper").classList.toggle("d-none", isText);
+        }
+
+        // Toggle password view
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector("i");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.className = "fas fa-eye-slash";
+            } else {
+                input.type = "password";
+                icon.className = "fas fa-eye";
+            }
+        }
+
+        // Cover file selection
+        let selectedCoverFile = null;
+        function handleCoverSelected(input) {
+            if (input.files && input.files[0]) {
+                selectedCoverFile = input.files[0];
+                const dropzone = document.getElementById("cover-dropzone");
+                dropzone.innerHTML = `
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <p class="mb-0 text-light fw-bold">${selectedCoverFile.name}</p>
+                    <small class="text-secondary">${(selectedCoverFile.size / 1024).toFixed(1)} KB</small>
+                `;
+                checkCoverCapacity(selectedCoverFile);
+            }
+        }
+
+        // Check image capacity via API
+        async function checkCoverCapacity(file) {
+            const formData = new FormData();
+            formData.append("cover_image", file);
+            try {
+                const res = await fetch("/api/stego/capacity", { method: "POST", body: formData });
+                const data = await res.json();
+                if (res.ok) {
+                    document.getElementById("capacity-badge").classList.remove("d-none");
+                    document.getElementById("capacity-text").textContent = 
+                        `${data.usable_capacity_kb} KB (${data.usable_capacity_bytes.toLocaleString()} bytes)`;
+                }
+            } catch (err) {
+                console.error("Capacity check failed:", err);
+            }
+        }
+
+        // Stego file selection
+        let selectedStegoFile = null;
+        function handleStegoSelected(input) {
+            if (input.files && input.files[0]) {
+                selectedStegoFile = input.files[0];
+                const dropzone = document.getElementById("stego-dropzone");
+                dropzone.innerHTML = `
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <p class="mb-0 text-light fw-bold">${selectedStegoFile.name}</p>
+                    <small class="text-secondary">${(selectedStegoFile.size / 1024).toFixed(1)} KB</small>
+                `;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById("stego-preview-img").src = e.target.result;
+                    document.getElementById("stego-preview-container").classList.remove("d-none");
+                };
+                reader.readAsDataURL(selectedStegoFile);
+            }
+        }
+
+        // Generate random key for input
+        async function generateRandomKeyForInput(targetInputId) {
+            try {
+                const res = await fetch("/api/stego/generate-key");
+                const data = await res.json();
+                document.getElementById(targetInputId).value = data.hex_key;
+                document.getElementById(targetInputId).type = "text";
+            } catch (err) {
+                console.error("Error generating key:", err);
+            }
+        }
+
+        // Execute Encrypt & Hide
+        async function executeEncryptAndHide() {
+            if (!selectedCoverFile) {
+                alert("Please select a cover image first.");
+                return;
+            }
+            const key = document.getElementById("aes_key_input").value.trim();
+            if (!key) {
+                alert("Please enter or generate an AES-256 secret key.");
+                return;
+            }
+
+            const payloadType = document.querySelector('input[name="payload_type"]:checked').value;
+            const formData = new FormData();
+            formData.append("cover_image", selectedCoverFile);
+            formData.append("payload_type", payloadType);
+            formData.append("key", key);
+
+            if (payloadType === "text") {
+                const text = document.getElementById("secret_text").value.trim();
+                if (!text) {
+                    alert("Please enter a secret message to hide.");
+                    return;
+                }
+                formData.append("secret_text", text);
+            } else {
+                const fileInput = document.getElementById("secret_file");
+                if (!fileInput.files || !fileInput.files[0]) {
+                    alert("Please choose a secret file to hide.");
+                    return;
+                }
+                formData.append("secret_file", fileInput.files[0]);
+            }
+
+            const btn = document.getElementById("btn-run-hide");
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Encrypting & Embedding LSB...`;
+
+            try {
+                const res = await fetch("/api/stego/hide", { method: "POST", body: formData });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || "Encryption and embedding failed.");
+                }
+
+                // Show results
+                document.getElementById("hide-placeholder").classList.add("d-none");
+                document.getElementById("hide-results").classList.remove("d-none");
+
+                document.getElementById("stego-result-img").src = data.stego_image_url;
+                document.getElementById("btn-download-stego").href = data.stego_image_url;
+
+                // Metrics
+                document.getElementById("metric-psnr").textContent = `${data.metrics.overall_psnr_db} dB`;
+                document.getElementById("metric-psnr-rating").textContent = data.metrics.psnr_rating;
+                document.getElementById("metric-mse").textContent = data.metrics.overall_mse;
+                document.getElementById("metric-cap-pct").textContent = `${data.capacity_used_pct}%`;
+                document.getElementById("metric-bytes").textContent = `${data.payload_bytes} bytes`;
+                document.getElementById("metric-modified-px").textContent = data.metrics.modified_pixels.toLocaleString();
+                document.getElementById("metric-modified-pct").textContent = `${data.metrics.percent_modified}% of carrier`;
+
+                window.lastGeneratedStegoUrl = data.stego_image_url;
+                window.lastGeneratedKey = key;
+
+            } catch (err) {
+                alert(`Error: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-shield-halved me-2"></i> Encrypt with AES-256 & Embed in Image`;
+            }
+        }
+
+        // Quick transfer stego to extract tab
+        function transferStegoToExtract() {
+            if (window.lastGeneratedKey) {
+                document.getElementById("extract_key_input").value = window.lastGeneratedKey;
+            }
+            switchTab("tab-extract");
+        }
+
+        // Execute Extract & Decrypt
+        async function executeExtractAndDecrypt() {
+            if (!selectedStegoFile) {
+                alert("Please select a stego image (PNG).");
+                return;
+            }
+            const key = document.getElementById("extract_key_input").value.trim();
+            if (!key) {
+                alert("Please enter the AES-256 secret key.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("stego_image", selectedStegoFile);
+            formData.append("key", key);
+
+            const btn = document.getElementById("btn-run-extract");
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Extracting & Decrypting...`;
+
+            document.getElementById("extract-error").classList.add("d-none");
+            document.getElementById("extract-results").classList.add("d-none");
+
+            try {
+                const res = await fetch("/api/stego/extract", { method: "POST", body: formData });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || "Extraction failed.");
+                }
+
+                document.getElementById("extract-placeholder").classList.add("d-none");
+                document.getElementById("extract-results").classList.remove("d-none");
+
+                if (data.type === "text") {
+                    document.getElementById("extracted-text-section").classList.remove("d-none");
+                    document.getElementById("extracted-file-section").classList.add("d-none");
+                    document.getElementById("extracted-text-content").textContent = data.text;
+                } else {
+                    document.getElementById("extracted-text-section").classList.add("d-none");
+                    document.getElementById("extracted-file-section").classList.remove("d-none");
+                    document.getElementById("extracted-filename").textContent = data.filename;
+                    document.getElementById("extracted-filesize").textContent = `${(data.file_size / 1024).toFixed(2)} KB`;
+                    document.getElementById("btn-download-recovered-file").href = data.download_url;
+                    document.getElementById("btn-download-recovered-file").download = data.filename;
+                }
+
+            } catch (err) {
+                document.getElementById("extract-placeholder").classList.add("d-none");
+                document.getElementById("extract-error").classList.remove("d-none");
+                document.getElementById("extract-error-msg").textContent = err.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-microchip me-2"></i> Extract LSB Bits & Verify Decryption`;
+            }
+        }
+
+        // Copy extracted text
+        function copyExtractedText() {
+            const text = document.getElementById("extracted-text-content").textContent;
+            navigator.clipboard.writeText(text).then(() => alert("Decrypted text copied to clipboard!"));
+        }
+
+        function copyInput(id) {
+            const input = document.getElementById(id);
+            navigator.clipboard.writeText(input.value).then(() => alert("Key copied to clipboard!"));
+        }
+
+        // Preview lab images
+        function previewLabImage(input, targetImgId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById(targetImgId).src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Execute Quality Analysis
+        async function executeQualityAnalysis() {
+            const coverInput = document.getElementById("lab_cover_input");
+            const stegoInput = document.getElementById("lab_stego_input");
+
+            if (!coverInput.files[0] || !stegoInput.files[0]) {
+                alert("Please select both a Cover image and a Stego image for comparison.");
+                return;
+            }
+
+            const amp = document.getElementById("lab_amp_factor").value;
+            const formData = new FormData();
+            formData.append("cover_image", coverInput.files[0]);
+            formData.append("stego_image", stegoInput.files[0]);
+            formData.append("amplification", amp);
+
+            try {
+                const res = await fetch("/api/stego/analyze", { method: "POST", body: formData });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || "Analysis failed.");
+                }
+
+                document.getElementById("quality-results-panel").classList.remove("d-none");
+
+                document.getElementById("comp-cover-img").src = URL.createObjectURL(coverInput.files[0]);
+                document.getElementById("comp-stego-img").src = URL.createObjectURL(stegoInput.files[0]);
+                document.getElementById("comp-diff-img").src = data.diff_image_url;
+
+                document.getElementById("table-psnr").textContent = `${data.metrics.overall_psnr_db} dB`;
+                document.getElementById("table-rating").textContent = data.metrics.psnr_rating;
+                document.getElementById("table-mse").textContent = data.metrics.overall_mse;
+                document.getElementById("table-ber").textContent = `${data.metrics.percent_modified}%`;
+                document.getElementById("table-pixels-count").textContent = `${data.metrics.modified_pixels.toLocaleString()} / ${data.metrics.total_pixels.toLocaleString()} px`;
+
+                const ch = data.metrics.channels;
+                document.getElementById("table-r-metrics").textContent = `${ch.red.psnr_db} dB (MSE: ${ch.red.mse})`;
+                document.getElementById("table-g-metrics").textContent = `${ch.green.psnr_db} dB (MSE: ${ch.green.mse})`;
+                document.getElementById("table-b-metrics").textContent = `${ch.blue.psnr_db} dB (MSE: ${ch.blue.mse})`;
+
+            } catch (err) {
+                alert(`Analysis Error: ${err.message}`);
+            }
+        }
+
+        // Key generator
+        async function fetchNewKeys() {
+            try {
+                const res = await fetch("/api/stego/generate-key");
+                const data = await res.json();
+                document.getElementById("gen_key_hex").value = data.hex_key;
+                document.getElementById("gen_key_b64").value = data.base64_key;
+            } catch (err) {
+                console.error("Failed to generate key:", err);
+            }
+        }
+
+        // Password entropy calculation
+        function evaluatePasswordEntropy(password) {
+            let pool = 0;
+            if (/[a-z]/.test(password)) pool += 26;
+            if (/[A-Z]/.test(password)) pool += 26;
+            if (/[0-9]/.test(password)) pool += 10;
+            if (/[^a-zA-Z0-9]/.test(password)) pool += 33;
+
+            let bits = 0;
+            if (pool > 0 && password.length > 0) {
+                bits = Math.round(password.length * Math.log2(pool));
+            }
+
+            document.getElementById("entropy-bits").textContent = `${bits} bits`;
+            const bar = document.getElementById("entropy-progress");
+            const label = document.getElementById("entropy-label");
+
+            const pct = Math.min(100, Math.round((bits / 128) * 100));
+            bar.style.width = `${pct}%`;
+
+            if (bits < 40) {
+                bar.className = "progress-bar bg-danger";
+                label.textContent = "Very Weak (Vulnerable to brute force)";
+            } else if (bits < 64) {
+                bar.className = "progress-bar bg-warning";
+                label.textContent = "Moderate (Acceptable for routine testing)";
+            } else if (bits < 96) {
+                bar.className = "progress-bar bg-info";
+                label.textContent = "Strong (High cryptographic security)";
+            } else {
+                bar.className = "progress-bar bg-success";
+                label.textContent = "Very Strong / Military Grade Entropy";
+            }
+        }
+
+        function downloadSampleAssets() {
+            window.location.href = "/api/stego/download-sample";
+        }
+
+        // Initialize keys on load
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchNewKeys();
+        });
+    </script>
+</body>
+</html>
